@@ -22,6 +22,9 @@ def clean_numbers(row_cols):
 def process_page(auth, page):
     fund = page[0][0].split(" ")[0]
     dept = page[1][0].split(" ")[0]
+    # Starting in 2025, the department header comes before the fund header
+    if len(fund) == 3 and len(dept) == 4:
+        fund, dept = dept, fund
     if page[2][0].startswith("("):
         auth = page[2][0].split("/")[-1][:-1]
     if page[3][0].startswith("("):
@@ -42,7 +45,7 @@ def process_page(auth, page):
             if starts_num:
                 appr_split = row[0].split(" ")
                 appr_cols = [appr_split[0], " ".join(appr_split[1:])]
-                if appr_cols[1].startswith("- "):
+                if appr_cols[1].startswith("- ") or row[1].startswith("- "):
                     continue
                 row_items = [fund, dept, auth] + appr_cols + clean_numbers(row[1:])
             else:
